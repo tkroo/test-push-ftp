@@ -11,7 +11,7 @@ jobs:
     - name: 📂 Sync Files
       uses: SamKirkland/web-deploy@v1
       with:
-        target-server: 10.87.173.210 
+        target-server: redfang.net
         remote-user: redfangn
         private-ssh-key: ${{ secrets.SSH_KEY }}
         destination-path: ~/www/push-test/
