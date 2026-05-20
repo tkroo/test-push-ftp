@@ -21,7 +21,7 @@ jobs:
         chmod 600 ~/.ssh/web_deploy_key        # Strict private key permissions
     
     - name: 📂 Sync Files
-      uses: SamKirkland/web-deploy@v1.2.5
+      uses: SamKirkland/web-deploy@v1
       with:
         target-server: redfang.net
         remote-user: redfangn
