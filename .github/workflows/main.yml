@@ -12,18 +12,25 @@ jobs:
     - name: 🚚 Get Latest Code
       uses: actions/checkout@v4
     
-    # New step to fix formatting and manually place the key where the action expects it
-    - name: 🔑 Fix and Inject SSH Key
+    - name: 🔑 Configure SSH and Deploy
+      env:
+        SSH_KEY: ${{ secrets.SSH_KEY }}
       run: |
+        # 1. Setup secure .ssh directory
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/web_deploy_key
-        sed -i 's/\r$//' ~/.ssh/web_deploy_key # Remove any hidden Windows carriage returns
-        chmod 600 ~/.ssh/web_deploy_key        # Strict private key permissions
-    
-    - name: 📂 Sync Files
-      uses: SamKirkland/web-deploy@v1
-      with:
-        target-server: redfang.net
-        remote-user: redfangn
-        private-ssh-key: ${{ secrets.SSH_KEY }}
-        destination-path: ~/www/push-test/
+        chmod 700 ~/.ssh
+
+        # 2. Format and inject private key cleanly
+        echo "$SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+
+        # 3. Add remote host to known_hosts to prevent interactive prompts
+        ssh-keyscan -H redfang.net >> ~/.ssh/known_hosts
+
+        # 4. Execute native rsync deployment
+        rsync --archive --verbose --compress --human-readable --delete-after \
+          --exclude='.git*' \
+          --exclude='README.md' \
+          --exclude='readme.md' \
+          -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+          ./ redfangn@redfang.net:~/www/push-test/
