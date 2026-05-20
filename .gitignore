@@ -1,0 +1,9 @@
+node_modules
+_site
+ignore
+Xignore
+xignore
+.env
+.cache
+aside/
+src/_assets/bgvideoneed-editing

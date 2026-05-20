@@ -1,16 +1,17 @@
 on: push
-name: 🚀 Deploy website on push
+name: Publish Website
 jobs:
   web-deploy:
-    name: 🎉 Deploy
+    name: 🚀 Deploy Website Every Commit
     runs-on: ubuntu-latest
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v6
+    - name: 🚚 Get Latest Code
+      uses: actions/checkout@v3
     
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+    - name: 📂 Sync Files
+      uses: SamKirkland/web-deploy@v1
       with:
-        server: ftp.redfang.net
-        username: david@redfang.net
-        password: ${{ secrets.ftp_password }}
+        target-server: 10.87.173.210 
+        remote-user: redfangn
+        private-ssh-key: ${{ secrets.SSH_KEY }}
+        destination-path: ~/www/push-test/
